@@ -1,5 +1,5 @@
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const IM={"setup": "images/cricketos-setup.jpg", "live": "images/cricketos-live.jpg", "board": "images/cricketos-board.jpg"};
+const IM={"setup": "cricketos-setup.jpg", "live": "cricketos-live.jpg", "board": "cricketos-board.jpg"};
 const f=(l,v)=>`<div><div class="u-l">${l}</div><div class="u-f">${v}</div></div>`;
 const C=[
 {id:'smartquote',n:'SmartQuote',t:'Quoting shouldn\'t feel like filling out a tax form.',d:'An AI-powered quoting tool for sales teams, rethought as a conversation.',chips:['Relanto Global','Enterprise AI','CPQ'],tag:'Illustrative recreation. Client work is confidential.',dev:'',
