@@ -40,5 +40,11 @@ const lb=document.createElement('div');lb.id='lb';lb.hidden=true;lb.setAttribute
 $$('.mosaic .zoom').forEach(b=>b.onclick=()=>{const i=$('img',b),t=$('img',lb);t.src=i.src;t.alt=i.alt;lb.hidden=false;lf=b;$('button',lb).focus()});
 $$('.stage .u.tab img').forEach(i=>i.onclick=()=>{const t=$('img',lb);t.src=i.src;t.alt=i.alt;lb.hidden=false;lf=null;$('button',lb).focus()});
 const cl=()=>{lb.hidden=true;lf&&lf.focus()};lb.onclick=cl;addEventListener('keydown',e=>{if(e.key==='Escape'&&!lb.hidden)cl()})}
+// scale any mockup that is taller than its stage so it never overlaps the caption
+function fitMocks(){$$('.stage').forEach(st=>{const sc=$('.scr',st),strip=parseFloat(getComputedStyle(sc).bottom)||0,avail=st.clientHeight-strip-12;
+$$('.scr>.u',st).forEach(u=>{u.style.transform='';const h=u.offsetHeight;if(h>avail)u.style.transform='scale('+Math.max(.6,avail/h)+')'})})}
+fitMocks();addEventListener('load',fitMocks);document.fonts&&document.fonts.ready.then(fitMocks);
+$$('.stage img').forEach(i=>{if(!i.complete)i.addEventListener('load',fitMocks)});
+let fz;addEventListener('resize',()=>{clearTimeout(fz);fz=setTimeout(fitMocks,150)});
 // copy email
 const toast=$('#toast');$('#cp').onclick=async()=>{let m='Email copied';try{await navigator.clipboard.writeText('abhinav4367@gmail.com')}catch(e){m='Copy failed. Select the address instead.'}toast.textContent=m;toast.classList.add('on');setTimeout(()=>toast.classList.remove('on'),1800)};
