@@ -14,16 +14,19 @@ steps:[['The problem','Paying means proving who you are, again.','Passwords, PIN
 scr:[`<div class="u ph"><div class="u-b ctr" style="padding:1.6em 1em"><span class="u-l">Pay</span><div class="big">₹1,249</div><div class="u-l">Enter your 6-digit PIN</div><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i><i></i></div><div class="u-l">Forgot PIN? Send OTP</div></div></div>`,
 `<div class="u ph"><div class="u-b ctr" style="padding:1.6em 1em"><span class="u-l">Pay</span><div class="big">₹1,249</div><div class="scan"><div class="face"></div></div><div class="u-l">Look at the screen</div></div></div>`,
 `<div class="u ph"><div class="u-b ctr" style="padding:1.6em 1em"><div class="ok">✓</div><div class="big" style="font-size:1.6em">Paid ₹1,249</div><div class="u-l">Verified by you</div></div></div>`]},
-{id:'cricketos',n:'CricketOS',t:'From player details to game data, on one tablet.',d:'B2B software for tablets used by Straight Drive, which operates automatic bowling machines.',chips:['Lazy Idli','B2B','Tablet','Straight Drive'],tag:'Screens from the project.',dev:'tab',
+{id:'cricketos',n:'CricketOS',t:'From player details to game data, on one tablet.',d:'B2B software for tablets used by Straight Drive, which operates automatic bowling machines.',chips:['Lazy Idli','B2B','Tablet','Straight Drive'],tag:'Screens from the project. Tap to enlarge.',dev:'tab',
 steps:[['01 · Match setup','Players and operators set up the game.','Names, batting style and phone number on one side. On the other: game difficulty, a target, number of overs, and bowlers dragged onto overs.'],['02 · On-going game','Then run it live, from one screen.','Score entry buttons, the current over, team stats, and tilt, pan and speed controls for the machine, with pause and slide to stop in reach.'],['03 · Game data','And show everyone how it is going.','A leaderboard with runs, balls, strike rate and rank, the current over, top performers, and balls left and runs required.']],
 scr:[`<div class="u tab"><img src="${IM.setup}" alt="Match setup screen: player names, batting style, difficulty, target and overs"></div>`,`<div class="u tab"><img src="${IM.live}" alt="On-going game screen with score entry, team stats and machine controls"></div>`,`<div class="u tab"><img src="${IM.board}" alt="Leaderboard screen with player stats, current over and top performers"></div>`]}];
 $('#cases').innerHTML=C.map((c,k)=>`<section class="case wrap" id="${c.id}" aria-labelledby="${c.id}-t"><span class="lab">0${k+1} / 03</span><div class="case-h"><h2 id="${c.id}-t">${c.n}</h2><p>${c.d}</p><div class="chips">${c.chips.map(x=>`<span>${x}</span>`).join('')}</div></div>
 <div class="scrolly"><div class="stage" aria-hidden="true">${c.scr.map((s,i)=>`<div class="scr${i?'':' on'}">${s}</div>`).join('')}<span class="tag">${c.tag}</span><div class="prog">${c.scr.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div></div>
 <div class="steps">${c.steps.map((s,i)=>`<div class="step${i?'':' on'}" data-i="${i}"><span class="lab"><b>${s[0]}</b></span><h3>${s[1]}</h3><p>${s[2]}</p></div>`).join('')}</div></div></section>`).join('');
 // scrollytelling
-const so=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const st=e.target,i=+st.dataset.i,cs=st.closest('.scrolly');
-$$('.step',cs).forEach(x=>x.classList.toggle('on',x===st));$$('.scr',cs).forEach((x,j)=>x.classList.toggle('on',j===i));$$('.prog i',cs).forEach((x,j)=>x.classList.toggle('on',j===i))}),{rootMargin:matchMedia('(max-width:860px)').matches?'-58% 0px -30% 0px':'-45% 0px -45% 0px'});
-$$('.step').forEach(s=>so.observe(s));
+let so;
+const stacked=()=>matchMedia('(max-width:860px)').matches&&!matchMedia('(orientation:landscape) and (max-height:520px)').matches;
+function setupSteps(){so&&so.disconnect();so=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const st=e.target,i=+st.dataset.i,cs=st.closest('.scrolly');
+$$('.step',cs).forEach(x=>x.classList.toggle('on',x===st));$$('.scr',cs).forEach((x,j)=>x.classList.toggle('on',j===i));$$('.prog i',cs).forEach((x,j)=>x.classList.toggle('on',j===i))}),{rootMargin:stacked()?'-58% 0px -30% 0px':'-45% 0px -45% 0px'});
+$$('.step').forEach(s=>so.observe(s))}
+setupSteps();let was=stacked(),rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(stacked()!==was){was=stacked();setupSteps()}},200)});
 // nav state, progress, timeline line
 const links=$$('nav a');
 function onS(){const h=document.documentElement.scrollHeight-innerHeight;$('#bar').style.transform=`scaleX(${h>0?scrollY/h:0})`;
@@ -35,6 +38,7 @@ new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.cl
 {const mo=new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target)}}),{threshold:.15});$$('.mosaic figure').forEach(x=>mo.observe(x));
 const lb=document.createElement('div');lb.id='lb';lb.hidden=true;lb.setAttribute('role','dialog');lb.setAttribute('aria-modal','true');lb.setAttribute('aria-label','Enlarged image');lb.innerHTML='<img alt=""><button type="button" aria-label="Close">×</button>';document.body.append(lb);let lf;
 $$('.mosaic .zoom').forEach(b=>b.onclick=()=>{const i=$('img',b),t=$('img',lb);t.src=i.src;t.alt=i.alt;lb.hidden=false;lf=b;$('button',lb).focus()});
+$$('.stage .u.tab img').forEach(i=>i.onclick=()=>{const t=$('img',lb);t.src=i.src;t.alt=i.alt;lb.hidden=false;lf=null;$('button',lb).focus()});
 const cl=()=>{lb.hidden=true;lf&&lf.focus()};lb.onclick=cl;addEventListener('keydown',e=>{if(e.key==='Escape'&&!lb.hidden)cl()})}
 // copy email
 const toast=$('#toast');$('#cp').onclick=async()=>{let m='Email copied';try{await navigator.clipboard.writeText('abhinav4367@gmail.com')}catch(e){m='Copy failed. Select the address instead.'}toast.textContent=m;toast.classList.add('on');setTimeout(()=>toast.classList.remove('on'),1800)};
